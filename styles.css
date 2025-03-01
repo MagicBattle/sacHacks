@@ -1,0 +1,144 @@
+/* Select everything to be border sizing */
+*{
+    box-sizing: border-box;
+}
+
+
+/* Set the body and html to have no margin/padding and fit to size */
+body, html{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+} 
+
+/* Body Layout */
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: Roboto, sans-serif;
+    background-image: url(/images/background.jpg);
+}
+
+/* Main Content Layout */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}  
+
+
+.nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    color: snow;
+}  
+
+.nav-left{
+    display: flex;
+    align-items: center;
+} 
+
+.title{
+    font-size: 20px;
+    font-weight: bold;
+    animation: slideRight 1.5s ease-in-out forwards;
+}
+
+.logo{
+    width: 80px;
+    height: auto;
+    margin-right: 10px;
+     /* Slide first, then rotate infinitely */
+     animation: 
+     slideRight 1.5s ease-in-out forwards, 
+     rotate 2s infinite linear 2s; /* Starts rotating after 2s */
+}
+
+
+.nav-right{
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links{
+    color: snow;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 16px;
+}  
+
+.calculator{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; 
+    color: snow;
+}  
+
+#url{
+    padding: 20px 20px;
+    width: 300px;
+    border: none;
+    border-radius: 20px; 
+} 
+
+#checker{
+    border: none;
+    border-radius: 20px;
+    width: 150px;
+    color: snow;
+    padding: 5px;
+    background-image: linear-gradient(to right,hsl(111, 28%, 74%), hsl(85, 27%, 64%));
+    cursor: pointer;
+    text-align: center;
+} 
+
+#checker:hover{
+    background-image: linear-gradient(to right,hsl(111, 28%, 84%), hsl(85, 27%, 74%));
+}
+
+
+.footer {
+    color: snow;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    width: 100%; /* Ensures the footer spans full width */
+    height: 60px; /* Optional: Adjust height as needed */
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: Adds contrast */
+}
+
+
+/* 
+Animations
+*/ 
+
+@keyframes slideRight {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+} 
+
+@keyframes rotate{
+    0%{
+        transform: rotate(0deg);
+    }
+    50%{
+        transform: rotate(180deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
