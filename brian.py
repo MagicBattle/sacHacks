@@ -6,8 +6,9 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-# ✅ Explicitly allow your frontend domain
-CORS(app, resources={r"/check": {"origins": "https://magicbattle.github.io"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+API_TOKEN = "ci1egxw2v.clixa5qci0000e7og427vx8lrf9ecf2a6.2141e66cad2dbea8"
 
 def encode_url(url):
     if not url.startswith(('http://', 'https://')):
@@ -18,32 +19,34 @@ def encode_url(url):
     encoded_query = urllib.parse.quote(parsed.query, safe="=&")
     encoded_fragment = urllib.parse.quote(parsed.fragment)
 
-    encoded_url = urllib.parse.urlunsplit((parsed.scheme,
-                                           parsed.netloc,
-                                           encoded_path,
-                                           encoded_query,
-                                           encoded_fragment))
+    encoded_url = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, encoded_path, encoded_query, encoded_fragment))
     return encoded_url
 
 @app.route('/check', methods=['GET'])
 def check_website():
     url = request.args.get('url')
-
     if not url:
         return jsonify({"error": "No URL provided"}), 400 
     
     encoded_url = encode_url(url)
-    api_url = f"https://ecoping.earth/api/website?url={encoded_url}"  # ✅ New API
+    headers = {
+        "x-api-token": API_TOKEN,
+        "accept": "application/json"
+    }
+
+    api_url = f"https://api.ecoping.earth/v2/reports/sites/{encoded_url}/performance"
 
     try:
-        response = requests.get(api_url)
+        response = requests.get(api_url, headers=headers)
         if response.status_code == 200:
-            response_json = response.json()
-            return jsonify(response_json), 200
+            return jsonify(response.json()), 200
         else:
-            return jsonify({"error": "Failed to fetch data from API"}), 500
+            return jsonify({"error": "Failed to fetch data from API"}), response.status_code
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500 
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 # url = "https://www.roblox.com/home" # REPLACE WITH DESIRED URL
