@@ -1,15 +1,18 @@
 # Yo whats going on guys and today we will be coding for Sac Hacks! Wow! OMG!
+# Yo whats going on guys and today we will be coding for Sac Hacks! Wow! OMG!
 from flask import Flask, request, jsonify
 import requests
 import urllib.parse
-import openai
 import os
 from flask_cors import CORS
+from openai import OpenAI
 
 app = Flask(__name__)
 CORS(app)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 def encode_url(url):
     if not url.startswith(('http://', 'https://')):
@@ -31,15 +34,14 @@ def ask_gpt(website):
     """
 
     try:
-        client = openai.OpenAI(api_key=OPENAI_API_KEY)  
-        response = client.chat.completions.create(
-            model="gpt-4",
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are an expert in environmental impact analysis."},
                 {"role": "user", "content": prompt}
             ]
         )
-        return response.choices[0].message.content
+        return completion.choices[0].message.content
     except Exception as e:
         return f"Error in GPT request: {str(e)}"
 
@@ -68,7 +70,6 @@ print("Loaded API Key:", "SET" if OPENAI_API_KEY else "NOT SET")
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 # url = "https://www.roblox.com/home" # REPLACE WITH DESIRED URL
 
