@@ -10,7 +10,6 @@ app = Flask(__name__)
 CORS(app)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-openai.api_key = OPENAI_API_KEY
 
 def encode_url(url):
     if not url.startswith(('http://', 'https://')):
@@ -32,14 +31,15 @@ def ask_gpt(website):
     """
 
     try:
-        response = openai.ChatCompletion.create(
+        client = openai.OpenAI(api_key=OPENAI_API_KEY)  
+        response = client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are an expert in environmental impact analysis."},
                 {"role": "user", "content": prompt}
             ]
         )
-        return response["choices"][0]["message"]["content"]
+        return response.choices[0].message.content
     except Exception as e:
         return f"Error in GPT request: {str(e)}"
 
@@ -63,7 +63,8 @@ def check_website():
         "url": encoded_url,
         "gpt_analysis": gpt_analysis
     })
-print("Loaded API Key:", OPENAI_API_KEY)
+
+print("Loaded API Key:", "SET" if OPENAI_API_KEY else "NOT SET")
 
 if __name__ == '__main__':
     app.run(debug=True)
