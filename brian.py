@@ -5,17 +5,15 @@ import urllib.parse
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/check": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def encode_url(url):
-    '''If url inputted doesnt have http in front or whatever'''
     if not url.startswith(('http://', 'https://')):
         url = 'http://' + url
 
     parsed = urllib.parse.urlsplit(url)
 
     encoded_path = urllib.parse.quote(parsed.path)
-
     encoded_query = urllib.parse.quote(parsed.query, safe="=&")
     encoded_fragment = urllib.parse.quote(parsed.fragment)
 
@@ -25,7 +23,6 @@ def encode_url(url):
                                             encoded_query,
                                             encoded_fragment))
     return encoded_url
-
 
 @app.route('/check', methods=['GET'])
 def check_website():
@@ -40,15 +37,15 @@ def check_website():
     try:
         response = requests.get(api_url)
         if response.status_code == 200:
-            return jsonify(response.json())
+            response_json = response.json()
+            return (jsonify(response_json), 200, {"Access-Control-Allow-Origin": "*"})
         else:
             return jsonify({"error": "Failed to fetch data from API"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500 
-    
+
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 
 
