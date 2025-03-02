@@ -78,12 +78,31 @@ body {
 /* Main Content Layout */
 main {
     flex: 1;
+    color: snow;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
 }   
 
+#section{
+    text-align: center;
+}
+
+#boxGrid{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.brief-box{
+    width: 220px; /* Set a consistent width for each watch box */
+    height: 400px; /* Set a consistent height for each watch box */
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: hsla(280, 27%, 70%, 0.250);
+
+}
 
 .footer {
     color: snow;

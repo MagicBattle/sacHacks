@@ -1,10 +1,11 @@
 # Yo whats going on guys and today we will be coding for Sac Hacks! Wow! OMG!
-# EPIC 
-# W
+from flask import Flask, request, jsonify
 import requests
 import urllib.parse
+from flask_cors import CORS
 
-print("Hello World!") 
+app = Flask(__name__)
+CORS(app)
 
 def encode_url(url):
     '''If url inputted doesnt have http in front or whatever'''
@@ -26,16 +27,38 @@ def encode_url(url):
     return encoded_url
 
 
+@app.route('/check', methods=['GET'])
+def check_website():
+    url = request.args.get('url')
+
+    if not url:
+        return jsonify({"error": "No URL provided"}), 400 
+    
+    encoded_url = encode_url(url)
+    api_url = f"https://api.websitecarbon.com/site?url={encoded_url}"
+
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return jsonify({"error": "Failed to fetch data from API"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500 
+    
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 
-url = "https://www.roblox.com/home" # REPLACE WITH DESIRED URL
 
-encoded_url = encode_url(url) # If user doesnt give http in front itll add it as well as go thru other stuff. API only works with "URL Encoded" urls
+# url = "https://www.roblox.com/home" # REPLACE WITH DESIRED URL
 
-response = requests.get(f"https://api.websitecarbon.com/site?url={encoded_url}")
+# encoded_url = encode_url(url) # If user doesnt give http in front itll add it as well as go thru other stuff. API only works with "URL Encoded" urls
 
-print(response.text)
+# response = requests.get(f"https://api.websitecarbon.com/site?url={encoded_url}")
+
+# print(response.text)
 
 ### EXAMPLE OF RESPONSE.TEXT:
 '''
