@@ -29,7 +29,6 @@ def encode_url(url):
 @app.route('/check', methods=['GET'])
 def check_website():
     url = request.args.get('url')
-
     if not url:
         return jsonify({"error": "No URL provided"}), 400 
     
@@ -40,7 +39,7 @@ def check_website():
         response = requests.get(api_url)
         if response.status_code == 200:
             response_json = response.json()
-            return jsonify(response_json)
+            return jsonify(response_json), 200
         else:
             return jsonify({"error": "Failed to fetch data from API"}), 500
     except Exception as e:

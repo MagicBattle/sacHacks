@@ -9,11 +9,10 @@ function convert() {
     }
 
     // Send request to Flask backend
-    fetch(`https://corsproxy.io/?${encodeURIComponent("https://sachacks-backend.onrender.com/check?url=" + url)}`)
+    fetch(`https://sachacks-backend.onrender.com/check?url=${encodeURIComponent(url)}`)
         .then(response => response.json())
         .then(data => {
             console.log("API Response:", data); // Debugging: Log API response
-
             if (data.error) {
                 result.textContent = "Error: " + data.error;
                 result.style.color = "red";
