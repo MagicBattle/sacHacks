@@ -18,9 +18,8 @@ body {
     display: flex;
     flex-direction: column;
     font-family: Roboto, sans-serif;
-    background-image: url(/images/background.jpg);
+    background-image: url(/images/about.png);
 }
-
 
 
 .nav{
@@ -73,46 +72,17 @@ body {
     animation: glow 0.5s infinite alternate ease-in-out;
 }
 
+
+
+
 /* Main Content Layout */
 main {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; 
-    align-items: center;
-    padding-top: 100px; /* Push content below navbar */
-    width: 100%;
-} 
-
-.calculator{
-    display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column; 
-    color: snow;
-}  
-
-#url{
-    padding: 20px 20px;
-    width: 300px;
-    border: none;
-    border-radius: 20px; 
-} 
-
-#checker{
-    border: none;
-    border-radius: 20px;
-    width: 150px;
-    color: snow;
-    padding: 5px;
-    background-image: linear-gradient(to right,hsl(111, 28%, 74%), hsl(85, 27%, 64%));
-    cursor: pointer;
-    text-align: center;
-} 
-
-#checker:hover{
-    background-image: linear-gradient(to right,hsl(111, 28%, 84%), hsl(85, 27%, 74%));
-}
+}   
 
 
 .footer {
@@ -124,13 +94,10 @@ main {
     height: 30px; /* Optional: Adjust height as needed */
     font-size: 7.5px;
     text-align: center;
-    background-color: hsla(131, 33%, 20%, 0.5); /* Optional: Adds contrast */
+    background-color: hsla(254, 15%, 50%, 0.149); /* Optional: Adds contrast */
 }
 
 
-/* 
-Animations
-*/ 
 
 @keyframes slideRight {
     from {
