@@ -8,7 +8,7 @@ function convert() {
         return;
     }
 
-    // Send request to your Flask proxy on Render
+    // Call your Flask backend, which acts as a proxy
     fetch(`https://sachacks-1.onrender.com/check?url=${encodeURIComponent(url)}`)
         .then(response => response.json())
         .then(data => {
@@ -20,7 +20,7 @@ function convert() {
                 result.innerHTML = `
                     <strong>Website:</strong> ${data.url} <br>
                     <strong>Carbon Emissions:</strong> ${data.statistics.co2.grid.grams}g CO2 per visit <br>
-                    <strong>Rating:</strong> ${data.rating} <br>
+                    <strong>Rating:</strong> ${data.green ? "Green Hosted ✅" : "Not Green ❌"} <br>
                     <strong>Greener Than:</strong> ${Math.round(data.cleanerThan * 100)}% of tested sites
                 `;
                 result.style.color = "white";

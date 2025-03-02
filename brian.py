@@ -5,9 +5,7 @@ import urllib.parse
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
-
-API_TOKEN = "ci1egxw2v.clixa5qci0000e7og427vx8lrf9ecf2a6.2141e66cad2dbea8"
+CORS(app)  # Enable CORS
 
 def encode_url(url):
     if not url.startswith(('http://', 'https://')):
@@ -30,21 +28,16 @@ def check_website():
     url = request.args.get('url')
     if not url:
         return jsonify({"error": "No URL provided"}), 400 
+
     encoded_url = encode_url(url)
-    headers = {
-        "x-api-token": API_TOKEN,
-        "accept": "application/json"
-    }
-    # Use the original API endpoint (adjust if needed)
     api_url = f"https://api.websitecarbon.com/site?url={encoded_url}"
+
     try:
-        response = requests.get(api_url, headers=headers)
+        response = requests.get(api_url)
         if response.status_code == 200:
             return jsonify(response.json()), 200
         elif response.status_code == 404:
             return jsonify({"error": "Website not found in API"}), 404
-        elif response.status_code == 401:
-            return jsonify({"error": "Invalid API token"}), 401
         else:
             return jsonify({"error": f"API request failed with status {response.status_code}"}), response.status_code
     except Exception as e:
