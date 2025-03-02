@@ -1,5 +1,5 @@
 # Yo whats going on guys and today we will be coding for Sac Hacks! Wow! OMG!
-# Yo whats going on guys and today we will be coding for Sac Hacks! Wow! OMG!
+
 from flask import Flask, request, jsonify
 import requests
 import urllib.parse
@@ -8,7 +8,7 @@ from flask_cors import CORS
 from openai import OpenAI
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://magicbattle.github.io"}})
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
@@ -47,7 +47,7 @@ def ask_gpt(website):
 
 @app.after_request
 def add_cors_headers(response):
-    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Origin", "https://magicbattle.github.io")
     response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
     response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
     return response
