@@ -8,23 +8,22 @@ function convert() {
         return;
     }
 
-    // Send request to Flask backend
-    fetch(`https://sachacks-backend.onrender.com/check?url=${encodeURIComponent(url)}`)
+    // Send request to your Flask proxy on Render
+    fetch(`https://sachacks-1.onrender.com/check?url=${encodeURIComponent(url)}`)
         .then(response => response.json())
         .then(data => {
-            console.log("API Response:", data); // Debugging: Log API response
+            console.log("API Response:", data);
             if (data.error) {
                 result.textContent = "Error: " + data.error;
                 result.style.color = "red";
             } else if (data.statistics && data.statistics.co2) {
-                // ✅ Display carbon emissions result
                 result.innerHTML = `
                     <strong>Website:</strong> ${data.url} <br>
                     <strong>Carbon Emissions:</strong> ${data.statistics.co2.grid.grams}g CO2 per visit <br>
                     <strong>Rating:</strong> ${data.rating} <br>
                     <strong>Greener Than:</strong> ${Math.round(data.cleanerThan * 100)}% of tested sites
                 `;
-                result.style.color = "white"; // Keep it readable
+                result.style.color = "white";
             } else {
                 result.textContent = "No carbon footprint data available.";
                 result.style.color = "orange";
