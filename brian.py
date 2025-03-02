@@ -2,10 +2,15 @@
 from flask import Flask, request, jsonify
 import requests
 import urllib.parse
+import openai
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS
+CORS(app)
+
+import os
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 
 def encode_url(url):
     if not url.startswith(('http://', 'https://')):
@@ -16,32 +21,39 @@ def encode_url(url):
     encoded_fragment = urllib.parse.quote(parsed.fragment)
     return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, encoded_path, encoded_query, encoded_fragment))
 
-@app.after_request
-def add_cors_headers(response):
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
-    response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
-    return response
+def ask_gpt(website):
+    """Queries GPT to analyze carbon impact."""
+    prompt = f"""
+    Analyze the carbon footprint of {website}. Consider:
+    - Hosting (check if it's green using The Green Web Foundation).
+    - Page size & bandwidth usage (estimated from common websites).
+    - Data center efficiency.
+    
+    Provide a brief report on CO2 emissions and recommendations to reduce it.
+    """
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "system", "content": "You are an expert in environmental impact analysis."},
+                  {"role": "user", "content": prompt}],
+        api_key=OPENAI_API_KEY
+    )
+    
+    return response["choices"][0]["message"]["content"]
 
 @app.route('/check', methods=['GET'])
 def check_website():
     url = request.args.get('url')
     if not url:
         return jsonify({"error": "No URL provided"}), 400 
-
+    
     encoded_url = encode_url(url)
-    api_url = f"https://api.websitecarbon.com/site?url={encoded_url}"
+    gpt_analysis = ask_gpt(encoded_url)
 
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            return jsonify(response.json()), 200
-        elif response.status_code == 404:
-            return jsonify({"error": "Website not found in API"}), 404
-        else:
-            return jsonify({"error": f"API request failed with status {response.status_code}"}), response.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500 
+    return jsonify({
+        "url": encoded_url,
+        "gpt_analysis": gpt_analysis
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
