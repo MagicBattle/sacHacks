@@ -34,17 +34,22 @@ def check_website():
         "accept": "application/json"
     }
 
-    api_url = f"https://api.ecoping.earth/v2/reports/sites/{encoded_url}/performance"
+    api_url = f"https://ecoping.earth/api/website?url={encoded_url}"
 
     try:
         response = requests.get(api_url, headers=headers)
+
         if response.status_code == 200:
             return jsonify(response.json()), 200
+        elif response.status_code == 404:
+            return jsonify({"error": "Website not found in Ecoping database"}), 404
+        elif response.status_code == 401:
+            return jsonify({"error": "Invalid API token"}), 401
         else:
-            return jsonify({"error": "Failed to fetch data from API"}), response.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500 
-
+            return jsonify({"error": f"API request failed with status {response.status_code}"}), response.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Request error: {str(e)}"}), 500 
+    
 if __name__ == '__main__':
     app.run(debug=True)
 
