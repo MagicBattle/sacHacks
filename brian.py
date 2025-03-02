@@ -5,7 +5,6 @@ import urllib.parse
 from flask_cors import CORS
 
 app = Flask(__name__)
-
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 API_TOKEN = "ci1egxw2v.clixa5qci0000e7og427vx8lrf9ecf2a6.2141e66cad2dbea8"
@@ -18,7 +17,6 @@ def encode_url(url):
     encoded_path = urllib.parse.quote(parsed.path)
     encoded_query = urllib.parse.quote(parsed.query, safe="=&")
     encoded_fragment = urllib.parse.quote(parsed.fragment)
-
     encoded_url = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, encoded_path, encoded_query, encoded_fragment))
     return encoded_url
 
@@ -27,18 +25,18 @@ def check_website():
     url = request.args.get('url')
     if not url:
         return jsonify({"error": "No URL provided"}), 400 
-    
+
     encoded_url = encode_url(url)
     headers = {
         "x-api-token": API_TOKEN,
         "accept": "application/json"
     }
 
-    api_url = f"https://ecoping.earth/api/website?url={encoded_url}"
+
+    api_url = f"https://api.ecoping.earth/website?url={encoded_url}"
 
     try:
         response = requests.get(api_url, headers=headers)
-
         if response.status_code == 200:
             return jsonify(response.json()), 200
         elif response.status_code == 404:
@@ -48,8 +46,8 @@ def check_website():
         else:
             return jsonify({"error": f"API request failed with status {response.status_code}"}), response.status_code
     except requests.exceptions.RequestException as e:
-        return jsonify({"error": f"Request error: {str(e)}"}), 500 
-    
+        return jsonify({"error": f"Request error: {str(e)}"}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
 
