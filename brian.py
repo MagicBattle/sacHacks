@@ -5,7 +5,9 @@ import urllib.parse
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/check": {"origins": "*"}}, supports_credentials=True)
+
+# Allow CORS for all domains and all routes
+CORS(app)
 
 def encode_url(url):
     if not url.startswith(('http://', 'https://')):
@@ -38,11 +40,7 @@ def check_website():
         response = requests.get(api_url)
         if response.status_code == 200:
             response_json = response.json()
-            return (jsonify(response_json), 200, {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type"
-            })
+            return jsonify(response_json)
         else:
             return jsonify({"error": "Failed to fetch data from API"}), 500
     except Exception as e:

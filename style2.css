@@ -96,7 +96,7 @@ main {
 }
 
 .brief-box{
-    width: 220px; /* Set a consistent width for each watch box */
+    width: 300px; /* Set a consistent width for each watch box */
     height: 400px; /* Set a consistent height for each watch box */
     overflow: hidden;
     border-radius: 10px;
