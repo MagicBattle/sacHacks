@@ -5,7 +5,7 @@ import urllib.parse
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/check": {"origins": "*"}})
 
 def encode_url(url):
     '''If url inputted doesnt have http in front or whatever'''
