@@ -3,14 +3,14 @@ from flask import Flask, request, jsonify
 import requests
 import urllib.parse
 import openai
+import os
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-import os
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
+openai.api_key = OPENAI_API_KEY
 
 def encode_url(url):
     if not url.startswith(('http://', 'https://')):
@@ -22,31 +22,40 @@ def encode_url(url):
     return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, encoded_path, encoded_query, encoded_fragment))
 
 def ask_gpt(website):
-    """Queries GPT to analyze carbon impact."""
     prompt = f"""
     Analyze the carbon footprint of {website}. Consider:
     - Hosting (check if it's green using The Green Web Foundation).
     - Page size & bandwidth usage (estimated from common websites).
     - Data center efficiency.
-    
+
     Provide a brief report on CO2 emissions and recommendations to reduce it.
     """
 
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "system", "content": "You are an expert in environmental impact analysis."},
-                  {"role": "user", "content": prompt}],
-        api_key=OPENAI_API_KEY
-    )
-    
-    return response["choices"][0]["message"]["content"]
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an expert in environmental impact analysis."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response["choices"][0]["message"]["content"]
+    except Exception as e:
+        return f"Error in GPT request: {str(e)}"
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+    return response
 
 @app.route('/check', methods=['GET'])
 def check_website():
     url = request.args.get('url')
     if not url:
         return jsonify({"error": "No URL provided"}), 400 
-    
+
     encoded_url = encode_url(url)
     gpt_analysis = ask_gpt(encoded_url)
 
@@ -54,6 +63,7 @@ def check_website():
         "url": encoded_url,
         "gpt_analysis": gpt_analysis
     })
+print("Loaded API Key:", OPENAI_API_KEY)
 
 if __name__ == '__main__':
     app.run(debug=True)
